@@ -107,11 +107,6 @@ python -m http.server -d docs 8000   # abra http://localhost:8000
 
 O pipeline é determinístico: as mesmas entradas geram exatamente os mesmos arquivos de saída e o mesmo `relatorio_qualidade.json`.
 
-### Publicação no GitHub Pages
-
-*Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / pasta `/docs` → Save.*
-O artigo ficará disponível em `https://rogerg7.github.io/estudantes-rede-publica-rio/`.
-
 ---
 
 ## Princípios FAIR
@@ -124,7 +119,3 @@ O artigo ficará disponível em `https://rogerg7.github.io/estudantes-rede-publi
 | **Reusable** | Licenças MIT (código) e CC BY 4.0 (dados/texto); `requirements.txt` congelado; pipeline rastreável (`valor_bruto`, `status_dado`, relatório de qualidade) |
 
 ---
-
-## Como citar
-
-> GOMES, Roger; LORENZATTO, Rodrigo. **Estudantes da rede pública por nível de ensino nas Regiões Administrativas do Rio de Janeiro (2000 × 2010)**. Rio de Janeiro: Universidade La Salle, 2026. Disponível em: <https://github.com/rogerg7/estudantes-rede-publica-rio>.
