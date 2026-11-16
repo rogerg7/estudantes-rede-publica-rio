@@ -1,0 +1,82 @@
+{
+  "arquivo_bruto": "tabela_892_estudantes_rede_publica_RA_2000_2010.xls",
+  "anos": {
+    "2000": {
+      "n_regioes_administrativas": 32,
+      "status_dado": {
+        "observado": 418,
+        "nao_disponivel": 11,
+        "zero_absoluto": 0
+      },
+      "soma_totais_RA": 1004408.0,
+      "total_municipio_publicado": 1004604.0,
+      "dif_RA_vs_municipio_pct": -0.0195,
+      "max_abs_dif_parcelas_vs_total_pct": 0.0,
+      "ra_com_maior_dif": "Município do Rio de Janeiro",
+      "celulas_nao_disponiveis": [
+        [
+          "Paquetá",
+          "Alfabetização de adultos"
+        ],
+        [
+          "Paquetá",
+          "Fundamental - supletivo"
+        ],
+        [
+          "Paquetá",
+          "Médio - supletivo"
+        ],
+        [
+          "Paquetá",
+          "Fundamental - regular não seriado"
+        ],
+        [
+          "Paquetá",
+          "Médio - regular não seriado"
+        ],
+        [
+          "Paquetá",
+          "Mestrado ou doutorado"
+        ],
+        [
+          "Paquetá",
+          "Pré-vestibular"
+        ],
+        [
+          "Rocinha",
+          "Mestrado ou doutorado"
+        ],
+        [
+          "Jacarezinho",
+          "Mestrado ou doutorado"
+        ],
+        [
+          "Complexo do Alemão",
+          "Mestrado ou doutorado"
+        ],
+        [
+          "Cidade de Deus",
+          "Mestrado ou doutorado"
+        ]
+      ]
+    },
+    "2010": {
+      "n_regioes_administrativas": 33,
+      "status_dado": {
+        "observado": 393,
+        "zero_absoluto": 15,
+        "nao_disponivel": 0
+      },
+      "soma_totais_RA": 1129833.19,
+      "total_municipio_publicado": 1129833.19,
+      "dif_RA_vs_municipio_pct": 0.0,
+      "max_abs_dif_parcelas_vs_total_pct": 0.0,
+      "ra_com_maior_dif": "Lagoa",
+      "celulas_nao_disponiveis": []
+    }
+  },
+  "ra_somente_2000": [],
+  "ra_somente_2010": [
+    "Vigário Geral"
+  ]
+}

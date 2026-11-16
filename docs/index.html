@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quem estuda na rede pública carioca? Níveis de ensino e desigualdade territorial nas Regiões Administrativas do Rio de Janeiro (2000–2010)</title>
+<meta name="description" content="Artigo acadêmico com pipeline reprodutível em Python: estudantes da rede pública por nível de ensino nas 33 Regiões Administrativas do Rio de Janeiro, Censos 2000 e 2010.">
+<meta name="keywords" content="educação pública, Censo Demográfico, Regiões Administrativas, Rio de Janeiro, desigualdade territorial, ciência de dados aberta">
+<!-- Metadados FAIR (Findable): Dublin Core + Highwire/Google Scholar -->
+<meta name="DC.title" content="Quem estuda na rede pública carioca? Níveis de ensino e desigualdade territorial nas Regiões Administrativas do Rio de Janeiro (2000–2010)">
+<meta name="DC.creator" content="Roger Gomes">
+<meta name="DC.creator" content="Rodrigo Lorenzatto">
+<meta name="DC.date" content="2026-11">
+<meta name="DC.language" content="pt-BR">
+<meta name="DC.rights" content="CC BY 4.0 (texto e dados); MIT (código)">
+<meta name="DC.source" content="IBGE, Censos Demográficos 2000 e 2010 — IPP/Data.Rio, Tabela 892">
+<meta name="citation_title" content="Quem estuda na rede pública carioca? Níveis de ensino e desigualdade territorial nas Regiões Administrativas do Rio de Janeiro (2000–2010)">
+<meta name="citation_author" content="Roger Gomes">
+<meta name="citation_author" content="Rodrigo Lorenzatto">
+<meta name="citation_publication_date" content="2026">
+<meta name="citation_dissertation_institution" content="Universidade La Salle">
+<meta name="citation_language" content="pt">
+<style>
+  :root {
+    --surface: #fcfcfb;
+    --surface-2: #f4f3f0;
+    --surface-3: #ebeae6;
+    --ink: #0b0b0b;
+    --ink-2: #3d3c39;
+    --ink-3: #52514e;
+    --rule: #e2e1dc;
+    --accent: #2a78d6;
+    --accent-ink: #1c5cab;
+    --accent-wash: #eaf2fc;
+    --code-bg: #f6f5f2;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: Inter, "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --measure: 46rem;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--surface); color: var(--ink);
+    font-family: var(--serif); font-size: 1.075rem; line-height: 1.68;
+  }
+  a { color: var(--accent-ink); text-underline-offset: 2px; }
+  a:hover { color: var(--accent); }
+
+  /* ---------- Cabeçalho ---------- */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    background: linear-gradient(180deg, #f3f6fb 0%, var(--surface) 100%);
+  }
+  .masthead-inner { max-width: 62rem; margin: 0 auto; padding: 2.6rem 1.25rem 2rem; }
+  .eyebrow {
+    font-family: var(--sans); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); margin: 0 0 .9rem; font-weight: 600;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 700; font-size: clamp(1.7rem, 3.6vw, 2.55rem);
+    line-height: 1.18; margin: 0 0 1.1rem; letter-spacing: -.01em; max-width: 52rem;
+  }
+  .authors { font-family: var(--sans); font-size: 1rem; margin: 0 0 .25rem; color: var(--ink); font-weight: 600; }
+  .affil { font-family: var(--sans); font-size: .9rem; color: var(--ink-3); margin: 0 0 1.2rem; line-height: 1.5; }
+  .badges { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin-bottom: 1.2rem; }
+  .badge {
+    display: inline-flex; font-family: var(--sans); font-size: .74rem; border-radius: 4px; overflow: hidden;
+    border: 1px solid var(--rule); line-height: 1; white-space: nowrap;
+  }
+  .badge span { padding: .36rem .5rem; }
+  .badge span:first-child { background: #4a4946; color: #fff; }
+  .badge span:last-child { background: #fff; color: var(--ink-2); font-weight: 600; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem; font-family: var(--sans); font-size: .9rem; font-weight: 600;
+    padding: .62rem 1rem; border-radius: 6px; text-decoration: none; border: 1px solid transparent;
+  }
+  .btn-primary { background: #1f2328; color: #fff; }
+  .btn-primary:hover { background: #000; color: #fff; }
+  .btn-ghost { border-color: var(--rule); color: var(--ink); background: #fff; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+  /* ---------- Layout ---------- */
+  .layout { max-width: 62rem; margin: 0 auto; padding: 0 1.25rem 4rem; display: grid; grid-template-columns: 12.5rem minmax(0, 1fr); gap: 2.75rem; }
+  nav.toc { position: sticky; top: 1.25rem; align-self: start; padding-top: 2.4rem; font-family: var(--sans); font-size: .84rem; }
+  nav.toc p { font-weight: 700; text-transform: uppercase; letter-spacing: .07em; font-size: .72rem; color: var(--ink-3); margin: 0 0 .6rem; }
+  nav.toc ol { list-style: none; padding: 0; margin: 0; border-left: 1px solid var(--rule); }
+  nav.toc li a { display: block; padding: .3rem 0 .3rem .85rem; color: var(--ink-3); text-decoration: none; line-height: 1.35; }
+  nav.toc li a:hover { color: var(--accent-ink); }
+  main { min-width: 0; max-width: var(--measure); }
+
+  /* ---------- Tipografia do artigo ---------- */
+  section { padding-top: 2.2rem; }
+  h2 {
+    font-family: var(--sans); font-size: 1.32rem; font-weight: 700; letter-spacing: -.005em;
+    margin: 0 0 1rem; padding-bottom: .45rem; border-bottom: 2px solid var(--ink);
+  }
+  h3 { font-family: var(--sans); font-size: 1.04rem; font-weight: 700; margin: 1.9rem 0 .6rem; }
+  p { margin: 0 0 1.05rem; hyphens: auto; }
+  strong { font-weight: 700; }
+  .lead-num { font-family: var(--sans); font-variant-numeric: tabular-nums; }
+
+  .abstract {
+    background: var(--surface-2); border-left: 4px solid var(--accent); padding: 1.35rem 1.5rem 1.1rem;
+    margin-top: 2.4rem; border-radius: 0 6px 6px 0;
+  }
+  .abstract h2 { border: 0; padding: 0; margin-bottom: .6rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em; }
+  .abstract p { font-size: 1rem; }
+  .keywords { font-family: var(--sans); font-size: .88rem; color: var(--ink-2); margin: .3rem 0 0; }
+  .keywords b { color: var(--ink); }
+
+  .rq-list { list-style: none; padding: 0; margin: 1.2rem 0 1.4rem; display: grid; gap: .7rem; }
+  .rq-list li { display: grid; grid-template-columns: 3.6rem 1fr; gap: .8rem; align-items: start;
+    background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: .85rem 1rem; }
+  .rq-tag { font-family: var(--sans); font-weight: 800; font-size: .82rem; color: #fff; background: var(--accent-ink);
+    border-radius: 4px; text-align: center; padding: .28rem 0; }
+
+  .callout { font-family: var(--sans); font-size: .92rem; line-height: 1.55; background: var(--accent-wash);
+    border: 1px solid #cfe0f7; border-radius: 6px; padding: .9rem 1.05rem; margin: 1.3rem 0; color: var(--ink-2); }
+  .callout b { color: var(--ink); }
+  .answer { background: #fff; border: 1px solid var(--rule); border-left: 4px solid var(--ink); border-radius: 0 6px 6px 0;
+    padding: .9rem 1.1rem; margin: 1.4rem 0; font-size: 1rem; }
+  .answer .rq-tag { display: inline-block; padding: .18rem .45rem; margin-right: .45rem; font-size: .74rem; }
+
+  /* ---------- Figuras ---------- */
+  figure { margin: 1.8rem 0; }
+  figure img { width: 100%; height: auto; display: block; border: 1px solid var(--rule); border-radius: 6px; background: #fcfcfb; }
+  figure.wide { margin-left: 0; margin-right: 0; }
+  .figure-frame { width: 100%; border: 1px solid var(--rule); border-radius: 6px; background: #fcfcfb; display: block; }
+  figcaption { font-family: var(--sans); font-size: .84rem; line-height: 1.5; color: var(--ink-3); margin-top: .65rem; }
+  figcaption b { color: var(--ink); }
+  .fig-open { font-weight: 600; white-space: nowrap; }
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* ---------- Tabelas ---------- */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .86rem; font-variant-numeric: tabular-nums; }
+  caption { caption-side: top; text-align: left; font-size: .84rem; color: var(--ink-3); padding-bottom: .5rem; line-height: 1.45; }
+  caption b { color: var(--ink); }
+  th, td { padding: .45rem .6rem; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { border-bottom: 2px solid var(--ink); font-weight: 700; color: var(--ink); vertical-align: bottom; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.pos { color: #1c5cab; font-weight: 600; }
+  td.neg { color: #b42f2e; font-weight: 600; }
+  table.wrap th, table.wrap td { white-space: normal; }
+  table.files tbody td:first-child { word-break: break-all; }
+  tfoot td { font-size: .78rem; color: var(--ink-3); border: 0; text-align: left; white-space: normal; padding-top: .55rem; }
+
+  /* ---------- Código ---------- */
+  pre {
+    background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem 1.1rem;
+    overflow-x: auto; font-family: var(--mono); font-size: .8rem; line-height: 1.55; margin: 1rem 0 1.4rem; tab-size: 4;
+  }
+  code { font-family: var(--mono); font-size: .86em; background: var(--surface-3); padding: .08em .3em; border-radius: 3px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .k { color: #8a3ffc; } .s { color: #18794e; } .c { color: #75736e; font-style: italic; } .f { color: #1c5cab; } .n { color: #b35900; }
+  .code-title { font-family: var(--sans); font-size: .78rem; color: var(--ink-3); margin: 1.2rem 0 -.6rem; font-weight: 600; }
+
+  /* ---------- Pipeline ---------- */
+  .pipeline { display: grid; grid-template-columns: repeat(6, 1fr); gap: .45rem; margin: 1.4rem 0; font-family: var(--sans); counter-reset: etapa; }
+  .pipeline div { background: #fff; border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px;
+    padding: .6rem .55rem; font-size: .76rem; line-height: 1.35; color: var(--ink-2); }
+  .pipeline div b { display: block; color: var(--ink); font-size: .8rem; margin-bottom: .2rem; }
+  .pipeline div b::before { counter-increment: etapa; content: counter(etapa) ". "; color: var(--accent-ink); }
+
+  /* ---------- FAIR ---------- */
+  .fair { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; margin: 1.2rem 0; }
+  .fair div { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: .9rem 1rem; font-family: var(--sans); font-size: .87rem; line-height: 1.5; color: var(--ink-2); }
+  .fair h4 { margin: 0 0 .35rem; font-size: .92rem; color: var(--ink); }
+  .fair h4 span { display: inline-grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: var(--ink); color: #fff; font-size: .8rem; margin-right: .45rem; }
+  .terminal { background: #15171a; color: #e6e6e3; border: 0; }
+  .terminal .c { color: #8c8f94; }
+  .terminal .p { color: #6da7ec; user-select: none; }
+
+  /* ---------- Referências ---------- */
+  ol.refs { padding-left: 0; list-style: none; font-size: .95rem; }
+  ol.refs li { margin-bottom: .8rem; padding-left: 1.6rem; text-indent: -1.6rem; line-height: 1.5; }
+
+  footer { border-top: 1px solid var(--rule); font-family: var(--sans); font-size: .8rem; color: var(--ink-3); }
+  footer .inner { max-width: 62rem; margin: 0 auto; padding: 1.4rem 1.25rem 2.2rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .8rem; }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    nav.toc { display: none; }
+    main { max-width: none; }
+    .pipeline { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 1rem; }
+    .masthead-inner { padding-top: 1.8rem; }
+    .duo, .fair { grid-template-columns: 1fr; }
+    .pipeline { grid-template-columns: repeat(2, 1fr); }
+    .rq-list li { grid-template-columns: 1fr; gap: .45rem; }
+    .rq-tag { width: 3.4rem; }
+    pre { font-size: .74rem; }
+    th, td { padding: .4rem .45rem; }
+  }
+  @media print {
+    nav.toc, .btn-row { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    iframe { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">Artigo acadêmico · Análise e Visualização de Dados com Python · 2026.2</p>
+    <h1>Quem estuda na rede pública carioca? Níveis de ensino e desigualdade territorial nas Regiões Administrativas do Rio de Janeiro (2000–2010)</h1>
+    <p class="authors">Roger Gomes · Rodrigo Lorenzatto</p>
+    <p class="affil">Bacharelado em Sistemas de Informação — 6º período · Universidade La Salle, Rio de Janeiro (RJ)<br>
+      Disciplina: Linguagem de Programação (Análise e Visualização de Dados com Python) · Projeto Final de Disciplina</p>
+    <div class="badges" aria-label="Metadados">
+      <span class="badge"><span>dados</span><span>IBGE · Censos 2000/2010</span></span>
+      <span class="badge"><span>fonte</span><span>IPP/Data.Rio · Tabela 892</span></span>
+      <span class="badge"><span>python</span><span>3.13</span></span>
+      <span class="badge"><span>stack</span><span>pandas · numpy · plotly</span></span>
+      <span class="badge"><span>código</span><span>MIT</span></span>
+      <span class="badge"><span>texto/dados</span><span>CC BY 4.0</span></span>
+      <span class="badge"><span>FAIR</span><span>F · A · I · R</span></span>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/rogerg7/estudantes-rede-publica-rio">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Repositório no GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/rogerg7/estudantes-rede-publica-rio/blob/main/notebooks/analise_exploratoria.ipynb">Notebook de análise</a>
+      <a class="btn btn-ghost" href="https://github.com/rogerg7/estudantes-rede-publica-rio/blob/main/data/data_dictionary.md">Dicionário de dados</a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Sumário">
+    <p>Sumário</p>
+    <ol>
+      <li><a href="#resumo">Resumo</a></li>
+      <li><a href="#introducao">1. Introdução</a></li>
+      <li><a href="#metodologia">2. Metodologia e pipeline</a></li>
+      <li><a href="#resultados">3. Resultados e discussão</a></li>
+      <li><a href="#rq1">&nbsp;&nbsp;3.1 RQ1 — Etapas</a></li>
+      <li><a href="#rq2">&nbsp;&nbsp;3.2 RQ2 — Território</a></li>
+      <li><a href="#rq3">&nbsp;&nbsp;3.3 RQ3 — Superior</a></li>
+      <li><a href="#conclusao">4. Conclusão</a></li>
+      <li><a href="#fair">5. Dados e declaração FAIR</a></li>
+      <li><a href="#referencias">6. Referências</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <!-- ================= RESUMO ================= -->
+    <section id="resumo" class="abstract" aria-labelledby="t-resumo">
+      <h2 id="t-resumo">Resumo</h2>
+      <p>Este estudo investiga como se transformou, entre os Censos Demográficos de 2000 e 2010, a população de estudantes da rede pública do Município do Rio de Janeiro segundo o nível de ensino e as Regiões Administrativas (RA) de residência. A partir da Tabela 892 do Armazém de Dados do Instituto Pereira Passos, foi construído um pipeline determinístico em Python (pandas e NumPy) que interpreta o cabeçalho mesclado da planilha, trata os marcadores especiais do IBGE sem imputação, harmoniza as categorias de ensino distintas nos dois censos e compatibiliza a criação da RA Vigário Geral. A análise exploratória combina medidas de variação, concentração (Gini, HHI), dispersão e correlação de postos. Os resultados mostram que a rede pública cresceu 12,0%, chegando a 1,12 milhão de estudantes, mas com recomposição interna: o ensino fundamental regular encolheu 9,4%, ao passo que creche (+119%), educação de jovens e adultos (+230%) e ensino superior (+43%) se expandiram. Territorialmente, a distribuição tornou-se levemente menos concentrada (Gini de 0,436 para 0,399), com crescimento liderado por Barra da Tijuca, Portuária e Rocinha. O peso do ensino superior público, porém, permanece muito desigual — de 1,2% no Complexo do Alemão a 45,0% em Botafogo — e a hierarquia entre RA quase não mudou (ρ de Spearman = 0,94). Os achados indicam que a expansão do acesso não alterou a geografia do ensino superior público na cidade e reforçam a importância de indicadores territorializados para o planejamento educacional.</p>
+      <p class="keywords"><b>Palavras-chave:</b> educação pública; Censo Demográfico; Regiões Administrativas; Rio de Janeiro; desigualdade territorial; ciência de dados aberta.</p>
+    </section>
+
+    <!-- ================= 1. INTRODUÇÃO ================= -->
+    <section id="introducao" aria-labelledby="t-intro">
+      <h2 id="t-intro">1. Introdução</h2>
+      <p>O Rio de Janeiro é uma cidade marcada por fortes contrastes socioespaciais. A mesma metrópole que concentra universidades públicas de referência abriga territórios onde o acesso a creches, à conclusão da educação básica e ao ensino superior é historicamente limitado. Compreender <em>quem</em> estuda na rede pública e <em>onde</em> essas pessoas vivem é condição para planejar a oferta de vagas, dimensionar a educação de jovens e adultos e avaliar se políticas de expansão alcançam os territórios que mais precisam delas.</p>
+      <p>A década de 2000 foi um período de mudanças relevantes na educação brasileira: ampliação do ensino fundamental para nove anos (BRASIL, 2006), criação do FUNDEB com financiamento estendido à educação infantil e à educação de jovens e adultos (BRASIL, 2007) e expansão do ensino superior. Os Censos Demográficos de 2000 e 2010 permitem observar, para cada Região Administrativa do município, o saldo dessas transformações a partir do local de residência dos estudantes — uma perspectiva que os registros administrativos por escola não oferecem.</p>
+      <p>Apesar da relevância, a tabela publicada pelo Instituto Pereira Passos não está pronta para análise: tem cabeçalhos mesclados, notas e marcadores textuais misturados aos números, categorias de ensino diferentes em cada censo e uma RA que só existe em 2010. Este trabalho propõe um pipeline aberto e reprodutível que resolve esses problemas e responde a três perguntas de pesquisa:</p>
+      <ul class="rq-list">
+        <li><span class="rq-tag">RQ1</span><span>Como variou a composição da população estudantil da rede pública por <strong>etapa de ensino</strong> entre 2000 e 2010 no município e nas Áreas de Planejamento?</span></li>
+        <li><span class="rq-tag">RQ2</span><span>Como os estudantes da rede pública se <strong>distribuem entre as RA</strong>, essa distribuição se tornou mais ou menos concentrada, e onde ocorreram o crescimento e a retração?</span></li>
+        <li><span class="rq-tag">RQ3</span><span>Existe <strong>desigualdade territorial no peso do ensino superior público</strong> entre as RA, e ela se reduziu no período?</span></li>
+      </ul>
+      <p>O restante do artigo descreve a fonte e o tratamento dos dados (Seção 2), apresenta e discute os resultados para cada pergunta (Seção 3), sintetiza conclusões e limitações (Seção 4) e documenta a disponibilidade dos dados segundo os princípios FAIR (Seção 5).</p>
+    </section>
+
+    <!-- ================= 2. METODOLOGIA ================= -->
+    <section id="metodologia" aria-labelledby="t-met">
+      <h2 id="t-met">2. Metodologia e Pipeline de Dados</h2>
+
+      <h3>2.1 Fonte primária e granularidade</h3>
+      <p>Os dados vêm da <strong>Tabela 892 — Número de estudantes da rede pública por nível de ensino, segundo as Regiões Administrativas — 2000/2010</strong>, publicada pelo Instituto Pereira Passos (IPP) no Armazém de Dados/Data.Rio, a partir dos <strong>Censos Demográficos do IBGE</strong> (questionário da amostra). O arquivo <code>.xls</code> tem uma aba por ano. A unidade de observação é a <strong>RA de residência</strong> do estudante (32 RA em 2000 e 33 em 2010, além da linha de total do município) e as colunas representam níveis de ensino: 13 em 2000 e 12 em 2010. Por serem dados amostrais, os valores de 2010 são estimativas ponderadas, com casas decimais.</p>
+
+      <div class="pipeline" aria-label="Etapas do pipeline">
+        <div><b>Extração</b>leitura das abas sem inferência de tipos (<code>dtype=object</code>)</div>
+        <div><b>Parsing</b>cabeçalho mesclado localizado dinamicamente</div>
+        <div><b>Limpeza</b>nomes de RA, romanos → inteiros, marcadores do IBGE</div>
+        <div><b>Harmonização</b>níveis 2000 × 2010 em etapas comparáveis</div>
+        <div><b>Validação</b>parcelas × totais; RA × município</div>
+        <div><b>Persistência</b>Parquet + CSV.gz + relatório JSON</div>
+      </div>
+
+      <h3>2.2 Parsing do arquivo não trivial</h3>
+      <p>O cabeçalho ocupa três linhas mescladas (rótulo geral, nível de ensino e modalidade — por exemplo, <em>Ensino fundamental → Regular seriado</em>). Em vez de fixar números de linha, o pipeline <strong>localiza dinamicamente</strong> a linha “Regiões Administrativas” e o início dos dados (“Rio de Janeiro”), propaga horizontalmente os rótulos mesclados (<code>ffill</code>) e compõe nomes únicos de coluna. Assim, o mesmo código funciona para as duas abas, que têm larguras diferentes.</p>
+      <p class="code-title">src/etl.py — montagem dos nomes de coluna a partir do cabeçalho mesclado</p>
+<pre><code><span class="k">def</span> <span class="f">montar_colunas</span>(bruto: pd.DataFrame, ini_cab: <span class="k">int</span>) -&gt; <span class="k">list</span>[<span class="k">str</span>]:
+    nivel = bruto.iloc[ini_cab + <span class="n">1</span>].ffill()      <span class="c"># desfaz a mesclagem horizontal</span>
+    sub = bruto.iloc[ini_cab + <span class="n">2</span>]                 <span class="c"># modalidade (regular, supletivo...)</span>
+    nomes = []
+    <span class="k">for</span> j <span class="k">in</span> <span class="f">range</span>(bruto.shape[<span class="n">1</span>]):
+        ...
+        n = re.sub(<span class="s">r"\s+"</span>, <span class="s">" "</span>, <span class="k">str</span>(nivel.iat[j])).strip()
+        s = sub.iat[j]
+        nomes.append(<span class="s">f"{n} - {str(s).strip()}"</span> <span class="k">if</span> pd.notna(s) <span class="k">else</span> n)
+    <span class="k">return</span> nomes</code></pre>
+
+      <h3>2.3 Tratamento de valores ausentes e conversão de tipos</h3>
+      <p>As notas de rodapé definem dois marcadores com significados opostos: na aba de 2000, <code>...</code> indica <em>dado numérico não disponível</em>; na de 2010, <code>-</code> indica <em>zero absoluto, não resultante de arredondamento</em>. Tratá-los da mesma forma seria um erro. O pipeline converte <code>...</code> em <code>NaN</code> e <code>-</code> em <code>0</code>, e guarda, para cada valor, o conteúdo original (<code>valor_bruto</code>) e a origem (<code>status_dado</code>) — nenhuma conversão é feita sem rastreabilidade.</p>
+      <p class="code-title">src/etl.py — conversão auditável de cada célula</p>
+<pre><code><span class="k">def</span> <span class="f">converter_valor</span>(bruto) -&gt; <span class="k">tuple</span>[<span class="k">float</span>, <span class="k">str</span>]:
+    <span class="s">"""Converte uma célula em (valor numérico, status_dado) sem perder a origem."""</span>
+    <span class="k">if</span> <span class="f">isinstance</span>(bruto, (<span class="k">int</span>, <span class="k">float</span>)) <span class="k">and not</span> pd.isna(bruto):
+        <span class="k">return</span> <span class="k">float</span>(bruto), <span class="s">"observado"</span>
+    texto = <span class="k">str</span>(bruto).strip()
+    <span class="k">if</span> texto == <span class="s">"..."</span>:            <span class="c"># nota da aba 2000</span>
+        <span class="k">return</span> np.nan, <span class="s">"nao_disponivel"</span>
+    <span class="k">if</span> texto == <span class="s">"-"</span>:              <span class="c"># nota da aba 2010</span>
+        <span class="k">return</span> <span class="n">0.0</span>, <span class="s">"zero_absoluto"</span>
+    ...</code></pre>
+      <p>Foram identificadas <strong>11 células indisponíveis</strong> em 2000 (7 em Paquetá e 4 de mestrado/doutorado em RA de favela) e <strong>15 zeros absolutos</strong> em 2010. Optou-se por <strong>não imputar</strong>: a validação mostrou que o total publicado de cada RA é exatamente igual à soma das parcelas disponíveis (diferença máxima de 0,000%), o que significa que essas células não entram nos totais oficiais. Os valores decimais de 2010 foram mantidos em <code>float64</code> e arredondados apenas na apresentação, evitando acumular erro de arredondamento. Os nomes das RA foram padronizados (espaços duplicados e grafias como <code>IIha do Governador</code> e <code>SantaTeresa</code> corrigidas), os algarismos romanos convertidos em inteiros e cada RA associada à sua Área de Planejamento (AP1 a AP5). As variáveis categóricas foram armazenadas com o tipo <code>category</code>.</p>
+
+      <h3>2.4 Harmonização das categorias de ensino</h3>
+      <p>Os censos não usam as mesmas categorias. Em 2000, fundamental e médio se dividem em regular seriado, regular não seriado e supletivo, e há “pré-vestibular” e “mestrado ou doutorado”; em 2010, há apenas regular e supletivo, e a pós-graduação aparece como especialização, mestrado e doutorado. Criou-se uma tabela de correspondência por expressões regulares sobre os nomes normalizados (sem acentos), que gera um <strong>nível harmonizado</strong>, uma <strong>etapa</strong> analítica e um indicador <code>comparavel_2000_2010</code>. Pré-vestibular (só em 2000; 2.165 estudantes) e especialização (só em 2010; 7.074) são preservados na base, mas <strong>excluídos das comparações</strong> temporais. O supletivo foi agrupado com a alfabetização de adultos na etapa <em>Educação de Jovens e Adultos (EJA)</em>.</p>
+      <p class="code-title">src/etl.py — trecho da tabela de harmonização (padrão → nível, etapa, comparável)</p>
+<pre><code>HARMONIZACAO = [
+    (<span class="s">r"^creche$"</span>, <span class="s">"Creche"</span>, <span class="s">"Creche"</span>, <span class="s">"Educação Infantil"</span>, <span class="k">True</span>),
+    (<span class="s">r"^ensino fundamental.*regular seriado$"</span>, ..., <span class="s">"Fundamental regular"</span>, <span class="s">"Ensino Fundamental"</span>, <span class="k">True</span>),
+    (<span class="s">r"^ensino fundamental.*supletivo$"</span>, ..., <span class="s">"Fundamental supletivo"</span>, <span class="s">"Educação de Jovens e Adultos"</span>, <span class="k">True</span>),
+    (<span class="s">r"^pre-vestibular$"</span>, ..., <span class="s">"Pré-vestibular"</span>, <span class="s">"Pré-vestibular"</span>, <span class="k">False</span>),
+    (<span class="s">r"^mestrado ou doutorado$"</span>, ..., <span class="s">"Mestrado/doutorado"</span>, <span class="s">"Ensino Superior"</span>, <span class="k">True</span>),
+    (<span class="s">r"^mestrado$"</span>, ..., <span class="s">"Mestrado/doutorado"</span>, <span class="s">"Ensino Superior"</span>, <span class="k">True</span>),
+    ...
+]
+<span class="c"># qualquer coluna sem correspondência interrompe o pipeline com erro explícito</span></code></pre>
+
+      <h3>2.5 Compatibilização territorial e métricas derivadas</h3>
+      <p>A RA XXXI Vigário Geral aparece apenas em 2010; seus bairros (Cordovil, Jardim América, Parada de Lucas e Vigário Geral) eram contabilizados na RA XI Penha em 2000. Comparar Penha diretamente produziria uma falsa queda de 40%. Para evitar esse viés, criou-se a unidade <strong>Penha + Vigário Geral</strong> para as comparações temporais, mantendo as linhas originais na base.</p>
+      <p class="code-title">src/etl.py — métricas de variação por RA</p>
+<pre><code>w[<span class="s">"variacao_abs"</span>]   = w[<span class="s">"estudantes_2010"</span>] - w[<span class="s">"estudantes_2000"</span>]
+w[<span class="s">"variacao_pct"</span>]   = <span class="n">100</span> * (w[<span class="s">"estudantes_2010"</span>] / w[<span class="s">"estudantes_2000"</span>] - <span class="n">1</span>)
+w[<span class="s">"taxa_anual_pct"</span>] = <span class="n">100</span> * ((w[<span class="s">"estudantes_2010"</span>] / w[<span class="s">"estudantes_2000"</span>]) ** (<span class="n">1</span> / <span class="n">10</span>) - <span class="n">1</span>)
+
+<span class="k">def</span> <span class="f">gini</span>(valores):
+    x = np.sort(np.asarray(valores, dtype=<span class="k">float</span>)); n = <span class="f">len</span>(x)
+    <span class="k">return</span> (<span class="n">2</span> * np.arange(<span class="n">1</span>, n + <span class="n">1</span>) - n - <span class="n">1</span>).dot(x) / (n * x.sum())</code></pre>
+      <p>As métricas derivadas são: participação de cada etapa no total da RA; variação absoluta, percentual e taxa geométrica anual; participação de cada RA no município; o <strong>peso do ensino superior</strong> (graduação + mestrado/doutorado sobre o total comparável da RA); e medidas de concentração (coeficiente de Gini, participação das cinco maiores RA e índice de Herfindahl-Hirschman). Outliers foram identificados pela regra de Tukey (1,5 × intervalo interquartil) e a estabilidade da hierarquia territorial pela correlação de postos de Spearman (SciPy).</p>
+
+      <h3>2.6 Validação e persistência</h3>
+      <p>A cada execução é gerado o arquivo <code>relatorio_qualidade.json</code>. A soma das RA difere do total do município em −0,019% em 2000 (efeito da amostra, conforme nota do IBGE) e 0,000% em 2010. O notebook inclui asserções automáticas (ausência de negativos e de duplicidades, coerência dos totais). Os dados processados são gravados em formato longo (<em>tidy</em>), em <strong>Parquet</strong> e <strong>CSV.gz</strong> (UTF-8), sem nunca sobrescrever o arquivo bruto. O total comparável analisado é de <span class="lead-num">1.002.439</span> estudantes em 2000 e <span class="lead-num">1.122.759</span> em 2010.</p>
+    </section>
+
+    <!-- ================= 3. RESULTADOS ================= -->
+    <section id="resultados" aria-labelledby="t-res">
+      <h2 id="t-res">3. Resultados e Discussão</h2>
+
+      <!-- RQ1 -->
+      <h3 id="rq1">3.1 RQ1 — A recomposição da rede pública por etapa de ensino</h3>
+      <p>Entre 2000 e 2010 a rede pública ganhou cerca de <strong>120 mil estudantes (+12,0%)</strong>. O crescimento, porém, não foi homogêneo entre as etapas (Figura 1 e Tabela 1). O ensino fundamental regular, que concentrava 59,1% dos estudantes em 2000, <strong>perdeu 55,8 mil alunos (−9,4%)</strong> e caiu para 47,8% do total. Em sentido oposto, cresceram a educação infantil (+34,2%), o ensino médio regular (+15,9%), o ensino superior (+43,1%) e, principalmente, a educação de jovens e adultos (+230,5%).</p>
+
+      <figure>
+        <img src="assets/fig1_etapas_municipio.png" alt="Gráfico de barras horizontais comparando 2000 e 2010 por etapa: Educação Infantil 132,5 mil para 177,8 mil (+34,2%); Ensino Fundamental 592,7 mil para 536,9 mil (−9,4%); Ensino Médio 181,0 mil para 209,9 mil (+15,9%); EJA 32,3 mil para 106,6 mil (+230,5%); Ensino Superior 64,0 mil para 91,5 mil (+43,1%)." width="1800" height="920" loading="lazy">
+        <figcaption><b>Figura 1.</b> Estudantes da rede pública por etapa de ensino no Município do Rio de Janeiro, 2000 e 2010. Rótulos indicam a variação percentual. Apenas níveis comparáveis. Fonte: elaboração própria a partir de IBGE/IPP (Tabela 892).</figcaption>
+      </figure>
+
+      <div class="table-wrap">
+        <table>
+          <caption><b>Tabela 1.</b> Estudantes da rede pública por nível harmonizado — Município do Rio de Janeiro</caption>
+          <thead><tr><th>Etapa / nível</th><th>2000</th><th>2010</th><th>Variação</th><th>Part. 2000</th><th>Part. 2010</th></tr></thead>
+          <tbody>
+            <tr><td>Creche</td><td>21.799</td><td>47.706</td><td class="pos">+118,8%</td><td>2,2%</td><td>4,2%</td></tr>
+            <tr><td>Pré-escola</td><td>65.921</td><td>62.277</td><td class="neg">−5,5%</td><td>6,6%</td><td>5,5%</td></tr>
+            <tr><td>Classe de alfabetização</td><td>44.782</td><td>67.839</td><td class="pos">+51,5%</td><td>4,5%</td><td>6,0%</td></tr>
+            <tr><td>Fundamental regular</td><td>592.663</td><td>536.908</td><td class="neg">−9,4%</td><td>59,1%</td><td>47,8%</td></tr>
+            <tr><td>Médio regular</td><td>181.027</td><td>209.859</td><td class="pos">+15,9%</td><td>18,1%</td><td>18,7%</td></tr>
+            <tr><td>Alfabetização de adultos</td><td>6.091</td><td>16.912</td><td class="pos">+177,7%</td><td>0,6%</td><td>1,5%</td></tr>
+            <tr><td>Fundamental supletivo</td><td>20.737</td><td>40.497</td><td class="pos">+95,3%</td><td>2,1%</td><td>3,6%</td></tr>
+            <tr><td>Médio supletivo</td><td>5.440</td><td>49.223</td><td class="pos">+804,8%</td><td>0,5%</td><td>4,4%</td></tr>
+            <tr><td>Superior — graduação</td><td>54.998</td><td>79.435</td><td class="pos">+44,4%</td><td>5,5%</td><td>7,1%</td></tr>
+            <tr><td>Mestrado/doutorado</td><td>8.981</td><td>12.104</td><td class="pos">+34,8%</td><td>0,9%</td><td>1,1%</td></tr>
+            <tr><td><b>Total comparável</b></td><td><b>1.002.439</b></td><td><b>1.122.759</b></td><td class="pos">+12,0%</td><td>100%</td><td>100%</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="6">Valores de 2010 são estimativas da amostra, arredondadas. Não incluídos: pré-vestibular (2.165 em 2000) e especialização (7.074 em 2010), por não existirem nos dois censos.</td></tr></tfoot>
+        </table>
+      </div>
+
+      <p>Três movimentos ajudam a interpretar esse quadro. Primeiro, a <strong>queda do fundamental regular</strong> é compatível com a transição demográfica — coortes de crianças menores — e com a redução da distorção idade-série, que diminui a permanência de jovens nessa etapa. Segundo, a dinâmica da educação infantil é heterogênea: creche mais que dobrou e a classe de alfabetização cresceu 51,5%, enquanto a pré-escola recuou 5,5%; a ampliação do fundamental para nove anos (BRASIL, 2006), que antecipou a matrícula das crianças de seis anos, é uma explicação plausível para essa redistribuição entre categorias. Terceiro, o salto da <strong>EJA</strong>, em especial do ensino médio supletivo (de 5,4 mil para 49,2 mil), coincide com a inclusão dessa modalidade no FUNDEB (BRASIL, 2007), mas pode também refletir diferenças de redação do questionário entre os censos — por isso a magnitude deve ser lida com cautela.</p>
+
+      <figure class="wide">
+        <iframe class="figure-frame" src="assets/interativos/fig2_composicao_ap.html" title="Gráfico interativo: composição por etapa de ensino por Área de Planejamento, 2000 e 2010" height="580" loading="lazy"></iframe>
+        <figcaption><b>Figura 2 (interativa).</b> Composição percentual por etapa de ensino, segundo a Área de Planejamento, em 2000 e 2010. Passe o cursor sobre as barras para ver valores absolutos. <a class="fig-open" href="assets/interativos/fig2_composicao_ap.html" target="_blank" rel="noopener">Abrir em tela cheia ↗</a></figcaption>
+      </figure>
+
+      <p>A recomposição ocorreu em <strong>todas as Áreas de Planejamento</strong> (Figura 2): o fundamental perdeu entre 9 e 13 pontos percentuais de participação em cada AP, e a EJA ganhou entre 5 e 7 pontos. A diferença marcante entre as APs está no ensino superior: na AP2 (Zona Sul e Grande Tijuca), ele responde por cerca de um quarto dos estudantes da rede pública (23,6% em 2000; 24,2% em 2010), enquanto na AP5 (Zona Oeste) não passa de 3,3% — tema retomado na RQ3.</p>
+
+      <div class="answer"><span class="rq-tag">RQ1</span>A rede pública cresceu 12%, mas mudou de perfil: perdeu peso no fundamental regular (59% → 48%) e ganhou nas pontas — creche, EJA e ensino superior. O padrão se repete em todas as Áreas de Planejamento, o que sugere fatores de alcance municipal ou nacional (demografia e políticas educacionais), e não apenas dinâmicas locais.</div>
+
+      <!-- RQ2 -->
+      <h3 id="rq2">3.2 RQ2 — Distribuição territorial: desconcentração e novos polos de crescimento</h3>
+      <p>A distribuição de estudantes entre as RA é assimétrica (assimetria de 1,34 em 2010): Campo Grande (105,4 mil), Jacarepaguá (95,0 mil), Santa Cruz (91,2 mil) e Bangu (86,4 mil) reúnem, juntas, mais de um terço dos estudantes da rede pública, enquanto Paquetá tem menos de mil. Ainda assim, as medidas de concentração mostram uma <strong>leve desconcentração</strong> no período (Tabela 2 e Figura 4).</p>
+
+      <div class="table-wrap">
+        <table class="wrap">
+          <caption><b>Tabela 2.</b> Medidas de concentração dos estudantes da rede pública entre as RA</caption>
+          <thead><tr><th>Medida</th><th>2000</th><th>2010</th><th style="text-align:left">Leitura</th></tr></thead>
+          <tbody>
+            <tr><td>Número de RA</td><td>32</td><td>33</td><td style="text-align:left">criação de Vigário Geral</td></tr>
+            <tr><td>Coeficiente de Gini</td><td>0,436</td><td>0,399</td><td style="text-align:left">menor concentração</td></tr>
+            <tr><td>Participação das 5 maiores RA</td><td>41,2%</td><td>39,2%</td><td style="text-align:left">−2,0 p.p.</td></tr>
+            <tr><td>Índice Herfindahl-Hirschman (HHI)</td><td>531</td><td>485</td><td style="text-align:left">menor concentração</td></tr>
+            <tr><td>Coeficiente de variação</td><td>0,85</td><td>0,79</td><td style="text-align:left">menor dispersão relativa</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="4">Parte da redução se deve à divisão da RA Penha. Mesmo assim, as maiores RA (AP5) perderam participação: de 33,9% para 31,6% do total.</td></tr></tfoot>
+        </table>
+      </div>
+
+      <figure class="wide">
+        <iframe class="figure-frame" src="assets/interativos/fig3_variacao_ra.html" title="Gráfico interativo: variação percentual do número de estudantes por RA entre 2000 e 2010" height="840" loading="lazy"></iframe>
+        <figcaption><b>Figura 3 (interativa).</b> Variação do número de estudantes da rede pública por RA, 2000→2010, ordenada. Azul indica crescimento e vermelho, retração; a linha pontilhada marca a média do município (+12,0%). * Penha e Vigário Geral são somadas para manter o mesmo território nos dois anos. <a class="fig-open" href="assets/interativos/fig3_variacao_ra.html" target="_blank" rel="noopener">Abrir em tela cheia ↗</a></figcaption>
+      </figure>
+
+      <p>A Figura 3 revela três grupos. <strong>(i) Fronteiras de expansão</strong>: Barra da Tijuca (+71,5%) e Portuária (+68,2%) são os únicos <em>outliers</em> superiores pela regra de Tukey (limite de +67,8%), seguidas de Rocinha (+65,4%), São Cristóvão (+52,6%) e Maré (+48,2%). Em números absolutos, os maiores acréscimos vieram de Jacarepaguá (+16,5 mil), Santa Cruz (+14,2 mil), Barra da Tijuca (+13,0 mil) e Maré (+11,5 mil) — a AP4 cresceu 28,1% e a AP1, 33,7%. <strong>(ii) Estabilidade nos grandes subúrbios</strong>: Campo Grande (+1,6%), Bangu (−3,5%), Madureira (−3,3%) e Méier (−2,4%) praticamente não cresceram, o que explica por que a AP5, a mais populosa em estudantes, avançou só 4,5%. <strong>(iii) Retração em áreas consolidadas</strong>: Botafogo (−10,3%), Ilha do Governador (−8,5%), Realengo (−6,9%), Centro (−4,9%) e Lagoa (−4,6%).</p>
+      <p>A compatibilização territorial se mostrou essencial: comparada isoladamente, a Penha teria encolhido 40,0%; somada a Vigário Geral, a mesma área <strong>cresceu 17,5%</strong>, acima da média municipal. Esse é um exemplo concreto de como uma escolha de tratamento de dados muda a conclusão de uma análise.</p>
+
+      <div class="duo">
+        <figure>
+          <img src="assets/fig4_lorenz_concentracao.png" alt="Curvas de Lorenz de 2000 e 2010; a curva de 2010 está ligeiramente mais próxima da linha de igualdade, com Gini 0,399 contra 0,436 em 2000." width="1240" height="1120" loading="lazy">
+          <figcaption><b>Figura 4.</b> Curva de Lorenz da distribuição de estudantes entre as RA. Quanto mais próxima da diagonal, menos concentrada.</figcaption>
+        </figure>
+        <div>
+          <p>A Curva de Lorenz de 2010 (Figura 4) se desloca em direção à diagonal sobretudo no trecho intermediário — as RA de porte médio, como Maré, Barra da Tijuca, Anchieta e Rocinha, ganharam participação. É importante notar que o Gini aqui mede a concentração <em>de estudantes</em>, que reflete principalmente o tamanho da população de cada RA; não é, por si só, um indicador de desigualdade de acesso. Para isso, a RQ3 usa uma métrica relativa.</p>
+        </div>
+      </div>
+
+      <div class="answer"><span class="rq-tag">RQ2</span>Os estudantes da rede pública estão concentrados na Zona Oeste e nos subúrbios, mas a distribuição ficou levemente menos concentrada (Gini 0,436 → 0,399). O crescimento se deslocou para a AP4 (Barra/Jacarepaguá), para a região portuária e para grandes favelas (Rocinha, Maré); áreas centrais e de alta renda, como Botafogo e Lagoa, perderam estudantes da rede pública.</div>
+
+      <!-- RQ3 -->
+      <h3 id="rq3">3.3 RQ3 — A geografia persistente do ensino superior público</h3>
+      <p>O peso do ensino superior — a parcela dos estudantes da rede pública de cada RA que cursa graduação, mestrado ou doutorado — subiu de 6,4% para 8,2% no município, e aumentou em <strong>28 das 32 RA</strong> comparáveis (mediana de +1,7 p.p.). A dispersão entre as RA, contudo, é extrema (Tabela 3 e Figura 5).</p>
+
+      <div class="table-wrap">
+        <table class="wrap">
+          <caption><b>Tabela 3.</b> Estatística descritiva do peso do ensino superior (% dos estudantes da rede pública) entre as RA</caption>
+          <thead><tr><th>Estatística</th><th>2000</th><th>2010</th></tr></thead>
+          <tbody>
+            <tr><td>Média das RA</td><td>8,1%</td><td>10,0%</td></tr>
+            <tr><td>Mediana</td><td>4,2%</td><td>6,1%</td></tr>
+            <tr><td>Desvio-padrão</td><td>8,8 p.p.</td><td>10,3 p.p.</td></tr>
+            <tr><td>Coeficiente de variação</td><td>1,10</td><td>1,02</td></tr>
+            <tr><td>Mínimo</td><td>0,6% (Complexo do Alemão)</td><td>1,2% (Complexo do Alemão)</td></tr>
+            <tr><td>Máximo</td><td>34,0% (Botafogo)</td><td>45,0% (Botafogo)</td></tr>
+            <tr><td>Amplitude</td><td>33,3 p.p.</td><td>43,8 p.p.</td></tr>
+            <tr><td>Razão máximo / mínimo</td><td>53,3×</td><td>37,3×</td></tr>
+            <tr><td>Outliers (Tukey)</td><td>Botafogo, Copacabana, Tijuca, Vila Isabel</td><td>Botafogo</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">Média &gt; mediana nos dois anos: distribuição assimétrica à direita, puxada pelas RA da AP2.</td></tr></tfoot>
+        </table>
+      </div>
+
+      <figure class="wide">
+        <iframe class="figure-frame" src="assets/interativos/fig5_superior_ra.html" title="Gráfico interativo de halteres: peso do ensino superior por RA em 2000 e 2010" height="880" loading="lazy"></iframe>
+        <figcaption><b>Figura 5 (interativa).</b> Peso do ensino superior entre os estudantes da rede pública de cada RA em 2000 (azul claro) e 2010 (azul), ordenado pelo valor de 2010. Vigário Geral só tem valor em 2010. <a class="fig-open" href="assets/interativos/fig5_superior_ra.html" target="_blank" rel="noopener">Abrir em tela cheia ↗</a></figcaption>
+      </figure>
+
+      <p>Em 2010, Botafogo (45,0%), Copacabana (31,2%), Lagoa (26,4%) e Tijuca (25,8%) estão no topo; no extremo oposto, Complexo do Alemão (1,2%), Santa Cruz (1,5%), Guaratiba (1,7%) e Rocinha (2,2%). A <strong>desigualdade relativa diminuiu</strong> levemente — o coeficiente de variação caiu de 1,10 para 1,02 e a razão entre máximo e mínimo, de 53 para 37 vezes —, porque as RA da base partiram de valores muito baixos. Já a <strong>distância absoluta aumentou</strong>: a amplitude passou de 33,3 para 43,8 pontos percentuais, com os maiores ganhos concentrados em Botafogo (+11,0 p.p.), Centro (+8,8 p.p.) e Copacabana (+6,5 p.p.), contra +0,6 p.p. no Complexo do Alemão e em Santa Cruz.</p>
+
+      <figure>
+        <img src="assets/fig6_dispersao_superior.png" alt="Gráfico de dispersão do peso do ensino superior por RA em 2000 (eixo x) e 2010 (eixo y). Os pontos seguem de perto a diagonal; Botafogo está no topo, com 34% e 45%; Spearman 0,94." width="1440" height="1200" loading="lazy">
+        <figcaption><b>Figura 6.</b> Peso do ensino superior por RA em 2000 × 2010 (32 RA presentes nos dois anos). Pontos acima da diagonal indicam aumento. A Penha de 2010 já exclui Vigário Geral; somadas, as duas RA passam de 3,9% para 5,9%.</figcaption>
+      </figure>
+
+      <p>A Figura 6 mostra que a <strong>hierarquia entre as RA praticamente não se alterou</strong>: a correlação de postos de Spearman entre 2000 e 2010 é de ρ = 0,94 (p &lt; 0,001). Apenas quatro RA perderam peso — Vila Isabel (−4,0 p.p.), Paquetá (−2,3 p.p., valor sensível ao tamanho reduzido e às células indisponíveis de 2000), Rio Comprido e Tijuca. Além disso, as RA com maior peso do superior em 2010 tiveram, em média, <strong>menor crescimento</strong> do total de estudantes da rede pública (Spearman ρ = −0,42; p = 0,018), o que reforça a leitura de que a expansão da rede pública ocorreu sobretudo na educação básica de áreas periféricas.</p>
+
+      <div class="callout"><b>Cuidado interpretativo.</b> O indicador mede a composição da rede pública <em>em cada RA</em>, não a taxa de acesso ao ensino superior. Em áreas de renda mais alta, muitas famílias usam escolas privadas na educação básica, o que reduz o denominador e eleva o peso do superior público. O valor de Botafogo, portanto, combina dois fenômenos: maior presença de estudantes em universidades públicas e menor uso da rede pública na educação básica. Mesmo com essa ressalva, a distância entre as RA da AP2 e as da AP5 e das grandes favelas é grande e persistente.</div>
+
+      <div class="answer"><span class="rq-tag">RQ3</span>Sim: o peso do ensino superior público varia de 1,2% a 45,0% entre as RA. Em termos relativos, a desigualdade caiu um pouco (CV 1,10 → 1,02), mas a distância absoluta cresceu (amplitude 33 → 44 p.p.) e a ordem das RA permaneceu quase idêntica (ρ = 0,94). A expansão do período não alterou a geografia do ensino superior público no Rio de Janeiro.</div>
+    </section>
+
+    <!-- ================= 4. CONCLUSÃO ================= -->
+    <section id="conclusao" aria-labelledby="t-conc">
+      <h2 id="t-conc">4. Conclusão</h2>
+      <p>Este trabalho mostrou que, entre 2000 e 2010, a rede pública do Rio de Janeiro cresceu e mudou de perfil: menos estudantes no fundamental regular e muito mais em creche, educação de jovens e adultos e ensino superior. No território, o crescimento se deslocou para a Barra da Tijuca, Jacarepaguá, a região portuária e grandes favelas, com leve desconcentração entre as RA. O ensino superior público, por outro lado, manteve uma geografia rígida: as mesmas RA da Zona Sul e da Grande Tijuca seguem no topo, e a distância absoluta para a periferia aumentou. Do ponto de vista metodológico, o trabalho evidenciou que decisões de engenharia de dados — distinguir “não disponível” de “zero”, harmonizar categorias e compatibilizar territórios — alteram diretamente as conclusões, como no caso da Penha.</p>
+      <p><strong>Limitações.</strong> (i) São dados da amostra do Censo, sujeitos a erro amostral, que não é divulgado na tabela; diferenças pequenas devem ser lidas com cautela. (ii) A tabela não traz a população residente por faixa etária, o que impede calcular taxas de atendimento — as métricas são de composição, não de cobertura. (iii) As categorias de ensino mudaram entre os censos; a harmonização reduz, mas não elimina, o risco de comparar conceitos diferentes (sobretudo no supletivo/EJA). (iv) O local é o de residência do estudante, não o da escola. (v) Com apenas dois pontos no tempo, não é possível identificar tendências nem relações causais.</p>
+      <p><strong>Trabalhos futuros.</strong> Integrar a população residente por idade e RA (também disponível no Data.Rio) para calcular taxas de escolarização; incorporar o Censo Demográfico de 2022 assim que a tabela equivalente for publicada; cruzar os resultados com indicadores socioeconômicos (IDS, renda) para testar associações; e produzir mapas coropléticos com as malhas oficiais das RA.</p>
+    </section>
+
+    <!-- ================= 5. FAIR ================= -->
+    <section id="fair" aria-labelledby="t-fair">
+      <h2 id="t-fair">5. Disponibilidade dos Dados e Declaração FAIR</h2>
+      <p>Todo o código, os dados bruto e processados, o dicionário de dados, o notebook executado e este artigo estão disponíveis publicamente em <a href="https://github.com/rogerg7/estudantes-rede-publica-rio">github.com/rogerg7/estudantes-rede-publica-rio</a>. Declaramos a aderência aos princípios FAIR (WILKINSON et al., 2016) conforme abaixo.</p>
+      <div class="fair">
+        <div><h4><span>F</span>Findable — Localizável</h4>README com resumo executivo, palavras-chave, autoria, disciplina, semestre e instituição; link para a fonte original (Data.Rio, Tabela 892); metadados Dublin Core e <code>citation_*</code> no cabeçalho desta página.</div>
+        <div><h4><span>A</span>Accessible — Acessível</h4>Repositório público; artigo aberto via GitHub Pages, responsivo; pipeline executável sem credenciais, APIs pagas ou downloads autenticados; dado bruto (60 KB) versionado com hash SHA-256.</div>
+        <div><h4><span>I</span>Interoperable — Interoperável</h4><code>data/data_dictionary.md</code> descreve cada variável (significado, tipo primitivo e formato); dados processados em Parquet e CSV.gz UTF-8, em formato longo; gráficos interativos em HTML aberto.</div>
+        <div><h4><span>R</span>Reusable — Reutilizável</h4>Licença MIT para o código e CC BY 4.0 para dados, figuras e texto; <code>requirements.txt</code> congelado com <code>pip freeze</code>; rastreabilidade de cada valor (<code>valor_bruto</code>, <code>status_dado</code>) e relatório de qualidade automático.</div>
+      </div>
+      <p class="code-title">Reprodução integral do pipeline (Linux/macOS; no Windows, ative com <code>.venv\Scripts\activate</code>)</p>
+<pre class="terminal"><code><span class="p">$ </span>git clone https://github.com/rogerg7/estudantes-rede-publica-rio.git
+<span class="p">$ </span>cd estudantes-rede-publica-rio
+<span class="p">$ </span>python -m venv .venv &amp;&amp; source .venv/bin/activate
+<span class="p">$ </span>pip install -r requirements.txt
+<span class="p">$ </span>python -m src.etl              <span class="c"># gera data/processed/ e relatorio_qualidade.json</span>
+<span class="p">$ </span>python -m src.visualizacoes    <span class="c"># gera docs/assets/ (PNG + Plotly)</span>
+<span class="p">$ </span>jupyter nbconvert --to notebook --execute --inplace notebooks/analise_exploratoria.ipynb
+<span class="p">$ </span>python -m http.server -d docs 8000   <span class="c"># abre o artigo em http://localhost:8000</span></code></pre>
+      <div class="table-wrap">
+        <table class="wrap files">
+          <caption><b>Tabela 4.</b> Artefatos de dados publicados</caption>
+          <thead><tr><th>Arquivo</th><th style="text-align:left">Conteúdo</th><th>Formato</th></tr></thead>
+          <tbody>
+            <tr><td><code>data/raw/tabela_892_…_2000_2010.xls</code></td><td style="text-align:left">Dado bruto original (IPP/IBGE)</td><td>XLS</td></tr>
+            <tr><td><code>data/processed/estudantes_ra_nivel_longo</code></td><td style="text-align:left">Base tidy completa (837 linhas)</td><td>Parquet, CSV.gz</td></tr>
+            <tr><td><code>data/processed/estudantes_ra_etapa</code></td><td style="text-align:left">Estudantes por etapa e participação</td><td>Parquet, CSV.gz</td></tr>
+            <tr><td><code>data/processed/variacao_ra_2000_2010</code></td><td style="text-align:left">Variação por RA (com unidade compatibilizada)</td><td>Parquet, CSV.gz</td></tr>
+            <tr><td><code>data/processed/indicador_ensino_superior_ra</code></td><td style="text-align:left">Peso do ensino superior por RA</td><td>Parquet, CSV.gz</td></tr>
+            <tr><td><code>data/processed/relatorio_qualidade.json</code></td><td style="text-align:left">Validações automáticas</td><td>JSON</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= 6. REFERÊNCIAS ================= -->
+    <section id="referencias" aria-labelledby="t-ref">
+      <h2 id="t-ref">6. Referências</h2>
+      <ol class="refs">
+        <li>BRASIL. Lei nº 11.274, de 6 de fevereiro de 2006. Altera a redação dos arts. 29, 30, 32 e 87 da Lei nº 9.394, de 20 de dezembro de 1996, dispondo sobre a duração de 9 (nove) anos para o ensino fundamental. <b>Diário Oficial da União</b>, Brasília, DF, 7 fev. 2006.</li>
+        <li>BRASIL. Lei nº 11.494, de 20 de junho de 2007. Regulamenta o Fundo de Manutenção e Desenvolvimento da Educação Básica e de Valorização dos Profissionais da Educação – FUNDEB. <b>Diário Oficial da União</b>, Brasília, DF, 21 jun. 2007.</li>
+        <li>HARRIS, C. R. et al. Array programming with NumPy. <b>Nature</b>, v. 585, p. 357–362, 2020. DOI: 10.1038/s41586-020-2649-2.</li>
+        <li>HUNTER, J. D. Matplotlib: a 2D graphics environment. <b>Computing in Science &amp; Engineering</b>, v. 9, n. 3, p. 90–95, 2007. DOI: 10.1109/MCSE.2007.55.</li>
+        <li>IBGE – INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA. <b>Censo Demográfico 2000</b>: resultados da amostra. Rio de Janeiro: IBGE, 2002.</li>
+        <li>IBGE – INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA. <b>Censo Demográfico 2010</b>: educação e deslocamento — resultados da amostra. Rio de Janeiro: IBGE, 2012.</li>
+        <li>INSTITUTO PEREIRA PASSOS (IPP). <b>Tabela 892 – Número de estudantes da rede pública por nível de ensino, segundo as Regiões Administrativas – 2000/2010</b>. Rio de Janeiro: Armazém de Dados / Data.Rio. Disponível em: <a href="https://www.data.rio/">https://www.data.rio/</a>. Acesso em: 9 nov. 2026.</li>
+        <li>McKINNEY, W. Data structures for statistical computing in Python. In: PYTHON IN SCIENCE CONFERENCE, 9., 2010, Austin. <b>Proceedings</b> [...]. Austin: SciPy, 2010. p. 56–61. DOI: 10.25080/Majora-92bf1922-00a.</li>
+        <li>PLOTLY TECHNOLOGIES INC. <b>Collaborative data science</b>. Montréal: Plotly Technologies Inc., 2015. Disponível em: <a href="https://plot.ly">https://plot.ly</a>.</li>
+        <li>TUKEY, J. W. <b>Exploratory data analysis</b>. Reading: Addison-Wesley, 1977.</li>
+        <li>VIRTANEN, P. et al. SciPy 1.0: fundamental algorithms for scientific computing in Python. <b>Nature Methods</b>, v. 17, p. 261–272, 2020. DOI: 10.1038/s41592-019-0686-2.</li>
+        <li>WICKHAM, H. Tidy data. <b>Journal of Statistical Software</b>, v. 59, n. 10, p. 1–23, 2014. DOI: 10.18637/jss.v059.i10.</li>
+        <li>WILKINSON, M. D. et al. The FAIR Guiding Principles for scientific data management and stewardship. <b>Scientific Data</b>, v. 3, 160018, 2016. DOI: 10.1038/sdata.2016.18.</li>
+      </ol>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="inner">
+    <span>© 2026 Roger Gomes e Rodrigo Lorenzatto · Universidade La Salle · Texto e dados: CC BY 4.0 · Código: MIT</span>
+    <span>Fonte dos dados: IBGE, Censos 2000 e 2010 · IPP/Data.Rio</span>
+  </div>
+</footer>
+
+</body>
+</html>
